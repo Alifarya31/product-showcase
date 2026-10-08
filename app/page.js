@@ -1,13 +1,13 @@
-import Form from 'next/form';
-import Link from 'next/link';
-import ProductCard from '../components/ProductCard';
-import { getAllProducts, getProducts, searchProducts } from '../lib/products';
+import Form from "next/form";
+import Link from "next/link";
+import ProductCard from "../components/ProductCard";
+import { getAllProducts, getProducts, searchProducts } from "../lib/products";
 
 const HOME_PRODUCT_COUNT = 5;
 
 export default async function HomePage({ searchParams }) {
   const params = await searchParams;
-  const query = (typeof params.q === 'string' ? params.q : '').trim();
+  const query = (typeof params.q === "string" ? params.q : "").trim();
 
   let products = [];
   let loadFailed = false;
@@ -16,13 +16,14 @@ export default async function HomePage({ searchParams }) {
     products = query
       ? searchProducts(await getAllProducts(), query)
       : await getProducts(HOME_PRODUCT_COUNT);
-  } catch {
+  } catch (error) {
+    console.error("Could not load products:", error);
     loadFailed = true;
   }
 
-  let heading = 'Featured products';
+  let heading = "Featured products";
   if (query) {
-    heading = `${products.length} ${products.length === 1 ? 'result' : 'results'} for “${query}”`;
+    heading = `${products.length} ${products.length === 1 ? "result" : "results"} for “${query}”`;
   }
 
   return (
@@ -67,8 +68,8 @@ export default async function HomePage({ searchParams }) {
         {loadFailed && (
           <div className="notice" role="alert">
             <p>
-              We could not load the products right now. Please refresh the page in
-              a moment.
+              We could not load the products right now. Please refresh the page
+              in a moment.
             </p>
           </div>
         )}
@@ -76,7 +77,7 @@ export default async function HomePage({ searchParams }) {
         {!loadFailed && products.length === 0 && (
           <div className="notice">
             <p>
-              No products match “{query}”. Try a different word, or{' '}
+              No products match “{query}”. Try a different word, or{" "}
               <Link href="/" className="text-link">
                 show the featured products
               </Link>
