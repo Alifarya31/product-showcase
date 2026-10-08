@@ -1,0 +1,20 @@
+{
+  "name": "product-showcase",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A simple product showcase built with Next.js (App Router) and the FakeStore API.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "oxlint app components lib"
+  },
+  "dependencies": {
+    "next": "^16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "oxlint": "^1.87.0"
+  }
+}
