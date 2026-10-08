@@ -1,6 +1,7 @@
 import Form from "next/form";
 import Link from "next/link";
-import ProductCard from "../components/ProductCard";
+import BrowserProductGrid from "../components/BrowserProductGrid";
+import ProductGrid from "../components/ProductGrid";
 import { getAllProducts, getProducts, searchProducts } from "../lib/products";
 
 const HOME_PRODUCT_COUNT = 5;
@@ -17,12 +18,15 @@ export default async function HomePage({ searchParams }) {
       ? searchProducts(await getAllProducts(), query)
       : await getProducts(HOME_PRODUCT_COUNT);
   } catch (error) {
-    console.error("Could not load products:", error);
+    // The server could not reach the API, so the browser will try instead.
+    console.error("Could not load products on the server:", error);
     loadFailed = true;
   }
 
   let heading = "Featured products";
-  if (query) {
+  if (query && loadFailed) {
+    heading = `Results for “${query}”`;
+  } else if (query) {
     heading = `${products.length} ${products.length === 1 ? "result" : "results"} for “${query}”`;
   }
 
@@ -65,35 +69,14 @@ export default async function HomePage({ searchParams }) {
           )}
         </div>
 
-        {loadFailed && (
-          <div className="notice" role="alert">
-            <p>
-              We could not load the products right now. Please refresh the page
-              in a moment.
-            </p>
-          </div>
-        )}
-
-        {!loadFailed && products.length === 0 && (
-          <div className="notice">
-            <p>
-              No products match “{query}”. Try a different word, or{" "}
-              <Link href="/" className="text-link">
-                show the featured products
-              </Link>
-              .
-            </p>
-          </div>
-        )}
-
-        {products.length > 0 && (
-          <ul className="product-grid">
-            {products.map((product, index) => (
-              <li key={product.id}>
-                <ProductCard product={product} priority={index < 5} />
-              </li>
-            ))}
-          </ul>
+        {loadFailed ? (
+          <BrowserProductGrid
+            key={query}
+            query={query}
+            limit={HOME_PRODUCT_COUNT}
+          />
+        ) : (
+          <ProductGrid products={products} query={query} />
         )}
       </section>
     </>

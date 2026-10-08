@@ -33,9 +33,10 @@ Open http://localhost:3000.
 
 ## How it works
 
-- **Data.** `lib/products.js` is the only file that talks to the API. Responses are cached for an hour (`revalidate`).
+- **Data.** `lib/products.js` talks to the API from the server (and `lib/browser-api.js` from the browser, see below). Responses are cached for an hour (`revalidate`).
 - **Slugs.** The API only has numeric ids, so a product's slug is `<id>-<title>`, for example `/products/1-fjallraven-foldsack-no-1-backpack-fits-15-laptops`. The page reads the id from the front of the slug.
 - **Rendering.** Pages are Server Components, so product data is in the HTML sent to the browser. Product pages are generated at build time with `generateStaticParams`. The home page is rendered on request, because it reads the search text from the URL (`/?q=jacket`).
+- **If the server cannot reach the API.** Some hosts block requests that come from cloud servers. In that case the pages fall back to loading the data in the visitor's browser (`components/BrowserProductGrid.jsx`, `components/BrowserProductDetail.jsx`), and product images are loaded directly by the browser (`images.unoptimized` in `next.config.js`).
 - **Favorites.** `components/FavoriteButton.jsx` is a Client Component. It reads the saved list in `useEffect` after the page loads (the server cannot see `localStorage`) and keeps the current state in `useState`. The storage key is `product-showcase:favorites`.
 
 ## Project structure
